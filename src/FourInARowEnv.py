@@ -36,8 +36,9 @@ class FourInARowEnv:
 
   def is_done(self) -> bool:
     is_done = False
-    for player in Players:
-      if self.horizontal_win(player) or self.vertical_win(player):
+    allowed_winners = [BoxState.RED,BoxState.YELLOW]
+    for colour in allowed_winners:
+      if self.horizontal_win(colour) or self.vertical_win(colour):
         is_done = True
     return is_done
 
@@ -67,11 +68,11 @@ class FourInARowEnv:
 # https://stackoverflow.com/questions/6313308/get-all-the-diagonals-in-a-matrix-list-of-lists-in-python
 
   # Code Quality should be fixed
-  def vertical_win(self,player) -> bool:
+  def vertical_win(self,colour) -> bool:
     streak = 0 
     for i in range(self._state.width):
         for j in range(self._state.height):   
-          if self._state.get_grid()[i][j] == player:
+          if self._state.get_grid()[i][j] == colour:
             streak +=1
             if streak == 4:
               return True
@@ -79,11 +80,11 @@ class FourInARowEnv:
             streak = 0
     return False
 
-  def horizontal_win(self,player) -> bool:
+  def horizontal_win(self,colour) -> bool:
     streak = 0 
     for i in range(self._state.height):
         for j in range(self._state.width):   
-          if self._state.get_grid()[j][i] == player:
+          if self._state.get_grid()[j][i] == colour:
             streak +=1
             if streak == 4:
               return True
