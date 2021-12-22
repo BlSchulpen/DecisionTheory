@@ -22,13 +22,12 @@ class FourInARowState:
       [BoxState.EMPTY for _ in range(self.height)]
       for _ in range(self.width)
     ]
+    # just for testing
     self._grid[0][0] = BoxState.RED
     self._grid[1][0] = BoxState.RED
     self._grid[2][0] = BoxState.RED
     self._grid[3][0] = BoxState.RED
 
-    # self.get_grid[0][0] = Players.RED
-    # self.get_grid[(self.width - 1)][(self.height - 1)] = Players.YELLOW
 
   def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
     self.width  = width

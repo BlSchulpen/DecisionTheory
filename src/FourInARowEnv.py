@@ -34,6 +34,35 @@ class FourInARowEnv:
   def get_possible_actions(self):
     pass
 
+
+  def test_grid_places(self):
+    x = self._state.width
+    y = self._state.height
+
+    a = np.arange(x*y).reshape(x,y)
+    return a 
+
+  def test_grid(self):
+    x = self._state.width
+    y = self._state.height
+
+    a = np.arange(x*y).reshape(x,y)
+    diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])]
+    diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1))
+
+    # to get the value back from each spot
+    
+    #from top! --> fix this last part
+    given_nr = 1 #plave holder
+    column_nr = 0
+    row_nr =0
+
+    
+
+
+    return diags
+
+
   def is_done(self) -> bool:
     is_done = False
     allowed_winners = [BoxState.RED,BoxState.YELLOW]
