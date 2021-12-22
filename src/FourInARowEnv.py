@@ -34,6 +34,30 @@ class FourInARowEnv:
   def get_possible_actions(self):
     pass
 
+
+  def get_all_diagonals_test(self):
+    x = self._state.width
+    y = self._state.height
+    a = np.arange(x*y).reshape(x,y)
+    diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])]
+    diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1))
+    #from top! --> fix this last part
+    dia_arr = []
+    for diagonal_ar in diags:
+      new_line = []
+      for spot in diagonal_ar:
+        given_nr = spot 
+        
+        # gives column and row nr from top --> this might cause issues???
+        column_nr = given_nr // self._state.height
+        row_nr = given_nr % self._state.height
+
+        # fix second one
+        row_nr_fixed = (y-row_nr) -1
+        new_line.append((column_nr,row_nr_fixed))
+      dia_arr.append(new_line)
+    return dia_arr
+
   def _get_all_diagonals(self):
     x = self._state.width
     y = self._state.height
@@ -46,10 +70,15 @@ class FourInARowEnv:
       new_line = []
       for spot in diagonal_ar:
         given_nr = spot 
+
         # gives column and row nr from top --> this might cause issues???
         column_nr = given_nr // self._state.height
         row_nr = given_nr % self._state.height
-        new_line.append(self._state.get_grid()[column_nr][row_nr])
+
+        row_nr_fixed = (y-row_nr) -1
+
+        
+        new_line.append(self._state.get_grid()[column_nr][row_nr_fixed])
       dia_arr.append(new_line)
     return dia_arr
 
@@ -75,8 +104,8 @@ class FourInARowEnv:
         streak +=1
         if streak ==4:
           return True
-        else:
-          streak = 0
+      else:
+        streak = 0
     return False
     
 
