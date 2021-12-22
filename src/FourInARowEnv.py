@@ -1,6 +1,9 @@
+from numpy.lib.function_base import select
+from src.BoxState import BoxState
 from .Players import Players
 from .FourInARowState import FourInARowState
 from .FourInARowRenderer import FourInARowRenderer
+import numpy as np
 
 class FourInARowEnv:
   _state   : FourInARowState
@@ -32,17 +35,61 @@ class FourInARowEnv:
     pass
 
   def is_done(self) -> bool:
-    for i in range(6):
-        print('row nr:' + str(i))
-        for j in range(7):   
-            print(self._state.get_grid()[j][i])
+    is_done = False
+    for player in Players:
+      if self.horizontal_win(player) or self.vertical_win(player):
+        is_done = True
+    return is_done
+
+  def diagonal_win(self) -> bool:
+    #getting all diagonals
+    x = self._state.width
+    y = self._state.height
     return False
 
+  def diagonal_spots_lt(self):
+    lines = [] 
+    x = self._state.width
+    y = self._state.height
 
-  # def is_row_done(self) -> bool:
-  #   for spot in self._state.get_grid:
-  #     print("test")
-  #   return False
+    for str_row in range(y):
+      line =  []
+      for i_round in range(str_row):
+        x_spot = (str_row - i_round)
+        y_spot = (str_row  + i_round)
+        line.append(self._state.get_grid()[x_spot][str_row])
+
+      # line.append
+      #   self._state.get_grid()[0][i] 
+
+    
+
+# https://stackoverflow.com/questions/6313308/get-all-the-diagonals-in-a-matrix-list-of-lists-in-python
+
+  # Code Quality should be fixed
+  def vertical_win(self,player) -> bool:
+    streak = 0 
+    for i in range(self._state.width):
+        for j in range(self._state.height):   
+          if self._state.get_grid()[i][j] == player:
+            streak +=1
+            if streak == 4:
+              return True
+          else:
+            streak = 0
+    return False
+
+  def horizontal_win(self,player) -> bool:
+    streak = 0 
+    for i in range(self._state.height):
+        for j in range(self._state.width):   
+          if self._state.get_grid()[j][i] == player:
+            streak +=1
+            if streak == 4:
+              return True
+          else:
+            streak = 0
+    return False
 
   def get_reward(self):
     pass
