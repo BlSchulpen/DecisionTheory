@@ -31,8 +31,18 @@ class FourInARowEnv:
   def get_possible_actions(self):
     pass
 
-  def is_done(self):
-    pass
+  def is_done(self) -> bool:
+    for i in range(6):
+        print('row nr:' + str(i))
+        for j in range(7):   
+            print(self._state.get_grid()[j][i])
+    return False
+
+
+  # def is_row_done(self) -> bool:
+  #   for spot in self._state.get_grid:
+  #     print("test")
+  #   return False
 
   def get_reward(self):
     pass
