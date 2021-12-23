@@ -85,13 +85,14 @@ class FourInARowEnv:
         return True
     return False
 
+    # https://stackoverflow.com/questions/6313308/get-all-the-diagonals-in-a-matrix-list-of-lists-in-python  
   def _get_all_diagonals(self):
     x = self._state.width
     y = self._state.height
 
-    a = np.arange(x*y).reshape(x,y)
-    diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])]
-    diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1))
+    a = np.arange(x*y).reshape(x,y) # a = 2d matrix like the grid but with numbers instead of BoxStates
+    diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])] # get the diagonals (array of arrays with numbers that are diagnoal (1ste diagonal line))
+    diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1)) # add second diagonal line
 
     dia_arr = []
     for diagonal_ar in diags:
@@ -105,7 +106,6 @@ class FourInARowEnv:
       dia_arr.append(new_line)
     return dia_arr
 
-# https://stackoverflow.com/questions/6313308/get-all-the-diagonals-in-a-matrix-list-of-lists-in-python
 
   def _is_diag_valid(self, diag, colour) -> bool:
     streak = 0 
@@ -117,4 +117,3 @@ class FourInARowEnv:
       else:
         streak = 0
     return False
-    
