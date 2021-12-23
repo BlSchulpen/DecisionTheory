@@ -4,20 +4,35 @@ from .Players import Players
 from .FourInARowState import FourInARowState
 from .FourInARowRenderer import FourInARowRenderer
 import numpy as np
+from copy import copy
 
 class FourInARowEnv:
   _state   : FourInARowState
   _renderer: FourInARowRenderer
 
-  def _calculate_possible_states(self):
+  def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
+    self._state    = FourInARowState(width=width, height=height, first_turn=first_turn)
+    self._renderer = FourInARowRenderer(self._state)
+    self.__possible_states = []
+    self._calculate_possible_states(self._state)
+
+
+  def _calculate_possible_states(self, state):
     pass
+      # actions = self.get_possible_actions(state)
+      # for action in actions:
+      #     new_state = copy(state)
+      #     if state.get_grid().count(BoxState.RED) == state.get_grid().count(BoxState.YELLOW):  
+      #         new_state.get_grid()[action[0]][action[1]] =BoxState.RED 
+      #     else: 
+      #         new_state.get_grid()[action[0]][action[1]] =BoxState.YELLOW 
+      #     self.__possible_states.append(new_state)
+      #     if not self.is_done(new_state):
+      #         self._calculate_possible_states(new_state)
 
   def _calculate_transition(self, action):
     pass
 
-  def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
-    self._state    = FourInARowState(width=width, height=height, first_turn=first_turn)
-    self._renderer = FourInARowRenderer(self._state)
 
   def reset(self) -> None:
     self._state.reset()
@@ -29,7 +44,7 @@ class FourInARowEnv:
     return self._renderer.render()
 
   def get_possible_states(self):
-    pass
+    return self.__possible_states
 
   def get_possible_actions(self, state = None):
     if state is None:
@@ -41,7 +56,9 @@ class FourInARowEnv:
         possible_states.append(highest)
     return possible_states
 
-  def is_done(self) -> bool:
+  def is_done(self, state = None) -> bool:
+    if state == None:
+      state = self._state
     is_done = False
     allowed_winners = [BoxState.RED,BoxState.YELLOW]
     for colour in allowed_winners:
