@@ -31,9 +31,15 @@ class FourInARowEnv:
   def get_possible_states(self):
     pass
 
-  def get_possible_actions(self):
-    pass
-
+  def get_possible_actions(self, state = None):
+    if state is None:
+      state = self._state
+    possible_states = [] 
+    for i in range(self._state.width):
+      highest = self._get_highest_possible(i)
+      if highest != False:
+        possible_states.append(highest)
+    return possible_states
 
   def is_done(self) -> bool:
     is_done = False
@@ -116,4 +122,12 @@ class FourInARowEnv:
           return True
       else:
         streak = 0
+    return False
+
+# Possible actions methods
+
+  def _get_highest_possible(self,x):
+    for j in range(self._state.height):
+      if self._state.get_grid()[x][j] == BoxState.EMPTY:
+        return (x,j)
     return False
