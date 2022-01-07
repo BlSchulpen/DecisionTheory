@@ -14,21 +14,29 @@ class FourInARowEnv:
     self._state    = FourInARowState(width=width, height=height, first_turn=first_turn)
     self._renderer = FourInARowRenderer(self._state)
     self.__possible_states = []
-    self._calculate_possible_states(self._state)
+  self._calculate_possible_states(self._state)
 
 
-  def _calculate_possible_states(self, state):
-    pass
-      # actions = self.get_possible_actions(state)
-      # for action in actions:
-      #     new_state = copy(state)
-      #     if state.get_grid().count(BoxState.RED) == state.get_grid().count(BoxState.YELLOW):  
-      #         new_state.get_grid()[action[0]][action[1]] =BoxState.RED 
-      #     else: 
-      #         new_state.get_grid()[action[0]][action[1]] =BoxState.YELLOW 
-      #     self.__possible_states.append(new_state)
-      #     if not self.is_done(new_state):
-      #         self._calculate_possible_states(new_state)
+  def calculate_possible_states(self, state):
+    # pass
+      actions = self.get_possible_actions(state)
+      for action in actions:
+          new_state = copy(state)
+          if self.nr_state(state,BoxState.RED) == self.nr_state(state,BoxState.YELLOW):  
+              new_state.get_grid()[action[0]][action[1]] =BoxState.RED 
+          else: 
+              new_state.get_grid()[action[0]][action[1]] =BoxState.YELLOW 
+          self.__possible_states.append(new_state)
+          if not self.is_done(new_state):
+              self._calculate_possible_states(new_state)
+  
+  def nr_state(self,state,given_state):
+    nr_state = 0 
+    for column in state.get_grid():
+      for item in column:
+        if item == given_state:
+          nr_state +=1
+    return nr_state
 
   def _calculate_transition(self, action):
     pass
@@ -78,6 +86,7 @@ class FourInARowEnv:
 # Is done methods
 
   # Code Quality should be fixed
+
   def _vertical_win(self,colour) -> bool:
     streak = 0 
     for i in range(self._state.width):
@@ -113,7 +122,7 @@ class FourInARowEnv:
     x = self._state.width
     y = self._state.height
 
-    a = np.arange(x*y).reshape(x,y) # a = 2d matrix like the grid but with numbers instead of BoxStates
+    a = np.arange(x*y).reshape(x,y) # a = matrix like the grid but with numbers instead of BoxStates
     diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])] # get the diagonals (array of arrays with numbers that are diagnoal (1ste diagonal line))
     diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1)) # add second diagonal line
 
