@@ -1,15 +1,19 @@
 from typing import Optional
+import numpy as np
+
+from .util import player_from_box_state
 from .BoxState import BoxState
 from .Players import Players
 
 FourInARowGrid = list[list[BoxState]]
 
 class FourInARowState:
-  width      : int
-  height     : int
-  _grid      : FourInARowGrid
-  _turn      : Players
-  _first_turn: Players
+  width         : int
+  height        : int
+  _grid         : FourInARowGrid
+  _turn         : Players
+  _first_turn   : Players
+  _win_condition: int
 
   def _check_for_four_in_a_row(self, x: int, y: int) -> bool:
     state = self._grid[x][y]
@@ -22,21 +26,67 @@ class FourInARowState:
       [BoxState.EMPTY for _ in range(self.height)]
       for _ in range(self.width)
     ]
-    # # just for testing
-    # self._grid[0][5] = BoxState.RED
-    # self._grid[1][4] = BoxState.RED
-    # self._grid[2][3] = BoxState.RED
-    # self._grid[3][2] = BoxState.RED
-    # self._grid[4][1] = BoxState.RED
-    # self._grid[5][0] = BoxState.RED
-    # self._grid[6][0] = BoxState.RED
 
+  def _check_section_for_win(self, section: list[BoxState]) -> Optional[Players]:
+    count = 0
+    count_owner: Optional[Players] = None
+    for item in section:
+      match player_from_box_state(item):
+        case None:
+          count = 0
+          count_owner = None
+        case player if player == count_owner:
+          count += 1
+          if count == self._win_condition:
+            return player
+        case _:
+          count = 1
+          count_owner = None
+  
+  def _check_vertical_win(self) -> Optional[Players]:
+    for col in range(self.width):
+      result = self._check_section_for_win(self._grid[col])
+      if result != None:
+        return result
+    return None
 
-  def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
-    self.width  = width
-    self.height = height
-    self._turn   = first_turn
-    self._first_turn = first_turn
+  def _check_horizontal_win(self) -> Optional[Players]:
+    for row in range(self.height):
+      section = [self._grid[col][row] for col in range(self.width)]
+      result = self._check_section_for_win(section)
+      if result != None:
+        return result
+    return None
+
+  # Not very pretty...
+  def _check_diagonal_win(self) -> Optional[Players]:
+    flipped = np.fliplr(self._grid)
+    for i in range(self.width):
+      result = self._check_section_for_win(np.diagonal(self._grid, i))
+      if result != None:
+        return result
+
+      result_flipped = self._check_section_for_win(np.diagonal(flipped, i))
+      if result_flipped != None:
+        return result_flipped
+
+    for i in range(self.height):
+      result = self._check_section_for_win(np.diagonal(self._grid, -i))
+      if result != None:
+        return result
+
+      result_flipped = self._check_section_for_win(np.diagonal(flipped, -i))
+      if result_flipped != None:
+        return result_flipped
+
+    return None
+
+  def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED, win_condition: int = 4) -> None:
+    self.width          = width
+    self.height         = height
+    self._turn          = first_turn
+    self._first_turn    = first_turn
+    self._win_condition = win_condition
 
     self._create_grid()
 
@@ -48,4 +98,15 @@ class FourInARowState:
     return self._grid
 
   def get_winner(self) -> Optional[Players]:
-    pass
+    horizontal_winner = self._check_horizontal_win()
+    vertical_winner = self._check_vertical_win()
+    diagonal_winner = self._check_diagonal_win()
+
+    if horizontal_winner != None:
+      return horizontal_winner
+    if vertical_winner != None:
+      return vertical_winner
+    if diagonal_winner != None:
+      return diagonal_winner
+    
+    return None
