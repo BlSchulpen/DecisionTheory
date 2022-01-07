@@ -41,7 +41,7 @@ class FourInARowState:
             return player
         case _:
           count = 1
-          count_owner = None
+          count_owner = player
   
   def _check_vertical_win(self) -> Optional[Players]:
     for col in range(self.width):
