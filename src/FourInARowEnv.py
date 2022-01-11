@@ -20,22 +20,21 @@ class FourInARowEnv:
   def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
     self._state    = FourInARowState(width=width, height=height, first_turn=first_turn)
     self._renderer = FourInARowRenderer(self._state)
-    self.__possible_states = []
-  self._calculate_possible_states(self._state)
+    self._possible_states = []
 
 
   def calculate_possible_states(self, state):
     # pass
-      actions = self.get_possible_actions(state)
-      for action in actions:
-          new_state = copy(state)
-          if self.nr_state(state,BoxState.RED) == self.nr_state(state,BoxState.YELLOW):  
-              new_state.get_grid()[action[0]][action[1]] =BoxState.RED 
-          else: 
-              new_state.get_grid()[action[0]][action[1]] =BoxState.YELLOW 
-          self.__possible_states.append(new_state)
-          if not self.is_done(new_state):
-              self._calculate_possible_states(new_state)
+    actions = self.get_possible_actions(state)
+    for action in actions:
+      new_state = copy(state)
+      if self.nr_state(state,BoxState.RED) == self.nr_state(state,BoxState.YELLOW):  
+        new_state.get_grid()[action[0]][action[1]] =BoxState.RED 
+      else: 
+        new_state.get_grid()[action[0]][action[1]] =BoxState.YELLOW 
+      self._possible_states.append(new_state)
+      if not self.is_done(new_state):
+        self.calculate_possible_states(new_state)
   
   def nr_state(self,state,given_state):
     nr_state = 0 
@@ -59,17 +58,15 @@ class FourInARowEnv:
     return self._renderer.render()
 
   def get_possible_states(self):
-    return self.__possible_states
+    return self.calculate_possible_states(self._state)
 
-  def get_possible_actions(self, state = None):
+  def get_possible_actions(self, state: FourInARowState = None) -> list[int]:
     if state is None:
       state = self._state
-    possible_states = [] 
-    for i in range(self._state.width):
-      highest = self._get_highest_possible(i)
-      if highest != False:
-        possible_states.append(highest)
-    return possible_states
+    return [column for column in range(state.width) if not state.is_column_full(column)]
+
+  def place_chip(self, player: Players, column: int) -> None:
+    self._state.place_chip(player, column)
 
   def is_done(self) -> bool:
     winner = self._state.get_winner()

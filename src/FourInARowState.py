@@ -1,7 +1,7 @@
 from typing import Optional
 import numpy as np
 
-from .util import player_from_box_state
+from .util import box_state_from_player, player_from_box_state
 from .BoxState import BoxState
 from .Players import Players
 
@@ -81,6 +81,15 @@ class FourInARowState:
 
     return None
 
+  def _get_column_height(self, column: int) -> int:
+    if column >= self.width:
+      raise Exception(f'given column ({column}) outside of playing field {self.width}')
+    
+    for row in range(self.height):
+      if self._grid[column][row] == BoxState.EMPTY:
+        return row
+    return self.height
+
   def __init__(self, width: int = 7, height: int = 6, first_turn: Players = Players.RED, win_condition: int = 4) -> None:
     self.width          = width
     self.height         = height
@@ -110,3 +119,14 @@ class FourInARowState:
       return diagonal_winner
     
     return None
+
+  def is_column_full(self, column: int) -> bool:
+    return self._get_column_height(column) >= self.height
+
+  def place_chip(self, player: Players, column: int) -> None:
+    height = self._get_column_height(column)
+    if height >= self.height:
+      raise Exception(f'column {column} already filled')
+
+    self._grid[column][height] = box_state_from_player(player)
+    
