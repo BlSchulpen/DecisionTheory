@@ -58,7 +58,7 @@ class FourInARowEnv():
   def get_possible_states(self) -> list[FourInARowState]:
     return self._calculate_possible_states(self._state)
 
-  def get_possible_actions(self, state: FourInARowState = None) -> list[int]:
+  def get_possible_actions(self, state: Optional[FourInARowState] = None) -> list[int]:
     if state is None:
       state = self._state
     return [column for column in range(state.width) if not state.is_column_full(column)]
@@ -76,7 +76,7 @@ class FourInARowEnv():
     else:
       return 0
 
-  def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: FourInARowState = None) -> float:
+  def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: Optional[FourInARowState] = None) -> float:
     if old_state is None:
        old_state = self._state
 
