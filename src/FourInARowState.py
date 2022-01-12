@@ -140,3 +140,8 @@ class FourInARowState:
         if chip != BoxState.EMPTY:
           return False
     return True
+
+  def is_finished(self) -> bool:
+    winner = self.get_winner()
+    full = self.is_full()
+    return winner != None or full

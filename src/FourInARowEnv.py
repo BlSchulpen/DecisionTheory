@@ -64,9 +64,7 @@ class FourInARowEnv():
     return [column for column in range(state.width) if not state.is_column_full(column)]
 
   def is_done(self) -> bool:
-    winner = self._state.get_winner()
-    full = self._state.is_full()
-    return winner != None or full
+    return self._state.is_finished()
 
   def get_reward_for_action(self, action: int) -> int:
     if self.is_done():
@@ -79,11 +77,11 @@ class FourInARowEnv():
     else:
       return -1
 
-  def get_transition_prob(self, action: int, old_state: FourInARowState, new_state: FourInARowState) -> float:
+  def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: FourInARowState = None) -> float:
     if old_state is None:
        old_state = self._state
 
-    if self.is_done(old_state):
+    if old_state.is_finished():
       return 0.0
 
     if old_state.is_column_full(action):
@@ -92,7 +90,7 @@ class FourInARowEnv():
     state_after = deepcopy(old_state)
     state_after.place_chip(action) 
 
-    if self.is_done(state=state_after) and state_after == new_state:
+    if state_after.is_finished() and state_after == new_state:
       return 1.0
     
     possible_new_states = [] 
