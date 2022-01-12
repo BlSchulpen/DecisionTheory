@@ -55,7 +55,7 @@ class FourInARowEnv():
   def render(self) -> str:
     return self._renderer.render()
 
-  def get_possible_states(self):
+  def get_possible_states(self) -> list[FourInARowState]:
     return self._calculate_possible_states(self._state)
 
   def get_possible_actions(self, state: FourInARowState = None) -> list[int]:
@@ -79,7 +79,7 @@ class FourInARowEnv():
     else:
       return -1
 
-  def get_transition_prob(self, action: int, old_state:FourInARowState, new_state:FourInARowState):
+  def get_transition_prob(self, action: int, old_state: FourInARowState, new_state: FourInARowState) -> float:
     if old_state is None:
        old_state = self._state
 
