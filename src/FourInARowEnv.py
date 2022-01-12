@@ -6,7 +6,7 @@ from .BoxState import BoxState
 from .Players import Players
 from .FourInARowState import FourInARowState
 from .FourInARowRenderer import FourInARowRenderer
-from copy import copy
+from copy import deepcopy
 
 def player_from_box_state(box_state: BoxState) -> Optional[Players]:
   match box_state:
@@ -29,7 +29,7 @@ class FourInARowEnv():
 
     actions = self.get_possible_actions(state)
     for action in actions:
-      new_state = copy(state)
+      new_state = deepcopy(state)
 
       new_state.place_chip(action)
 
@@ -74,16 +74,16 @@ class FourInARowEnv():
     full = self._state.is_full()
     return winner != None or full
 
-  def get_reward(self):
-    pass
+  def get_reward_for_action(self, action: int) -> int:
+    if self.is_done():
+      return 0
+
+    new_state = deepcopy(self._state)
+    new_state.place_chip(action)
+    if new_state.get_winner() != None:
+      return 1
+    else:
+      return -1
 
   def get_transition_prob(self, action):
     pass
-
-  # Possible actions methods
-
-  def _get_highest_possible(self,x):
-    for j in range(self._state.height):
-      if self._state.get_grid()[x][j] == BoxState.EMPTY:
-        return (x,j)
-    return False
