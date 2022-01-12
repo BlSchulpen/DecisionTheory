@@ -39,12 +39,6 @@ class FourInARowEnv():
 
     return possible_states
 
-  def _calculate_transition(self, action):
-    pass
-
-  def reset(self) -> None:
-    self._state.reset()
-
   def step(self, action: int) -> None:
     made_turn = False
     if self._state.get_player_turn() == Players.RED:
@@ -103,7 +97,7 @@ class FourInARowEnv():
     
     possible_new_states = [] 
 
-    possible_opponent_actions = self.get_possible_actions(state=state_after) # of yellow...
+    possible_opponent_actions = self.get_possible_actions(state=state_after)
     for action in possible_opponent_actions:
       possible_new_state = deepcopy(state_after)
       possible_new_state.place_chip(action) 
@@ -111,6 +105,5 @@ class FourInARowEnv():
     if new_state not in possible_new_states:
       return 0.0
 
-    # this only works for a random opponent
     prob = 1 / len(possible_new_states)
     return prob
