@@ -26,21 +26,6 @@ class FourInARowEnv():
     self._yellow_agent = yellow_agent(self)
     self._possible_states = None
 
-  def _calculate_possible_states(self, state: FourInARowState) -> list[FourInARowState]:
-    possible_states = []
-
-    actions = self.get_possible_actions(state)
-    for action in actions:
-      new_state = deepcopy(state)
-
-      new_state.place_chip(action)
-
-      possible_states.append(new_state)
-      if not new_state.is_finished():
-        possible_states.extend(self._calculate_possible_states(new_state))
-
-    return possible_states
-
   def reset(self) -> None:
     self._state.reset()
 
@@ -60,11 +45,8 @@ class FourInARowEnv():
   def render(self) -> str:
     return self._renderer.render()
 
-  def get_possible_states(self) -> list[FourInARowState]:
-    if self._possible_states == None:
-      self._possible_states = self._calculate_possible_states(self._state)
-
-    return self._possible_states
+  def get_state(self) -> FourInARowState:
+    return self._state
 
   def get_possible_actions(self, state: Optional[FourInARowState] = None) -> list[int]:
     if state is None:
@@ -74,15 +56,29 @@ class FourInARowEnv():
   def is_done(self) -> bool:
     return self._state.is_finished()
 
-  def get_reward_for_new(self, state: FourInARowState) -> int:
+  def get_reward_for_state(self, state: FourInARowState, player: Players) -> int:
     winner = state.get_winner()
     if winner != None:
-      if winner != state.get_player_turn():
+      if winner == player:
         return 1
       else:
         return -1
     else:
       return 0
+
+  def get_possible_states_after_action(self, state: FourInARowState, action: int) -> list[FourInARowState]:
+    state_after = deepcopy(state)
+    state_after.place_chip(action)
+
+    if state_after.is_finished():
+      return []
+
+    result = []
+    for a in self.get_possible_actions(state_after):
+      copy = deepcopy(state_after)
+      copy.place_chip(a)
+      result.append(copy)
+    return result
 
   def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: Optional[FourInARowState] = None) -> float:
     if old_state is None:
