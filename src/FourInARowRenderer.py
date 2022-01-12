@@ -31,3 +31,6 @@ class FourInARowRenderer:
     ])
 
     return f'{top_line}{background}{bottom_line}'
+
+  def render_multiple_states(states: list[FourInARowState], columns: 3) -> str:
+    

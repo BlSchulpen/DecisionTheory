@@ -19,8 +19,8 @@ class FourInARowEnv():
   _renderer: FourInARowRenderer
   _yellow_agent = FourInARowAgent
 
-  def __init__(self, yellow_agent, width: int = 7, height: int = 6, first_turn: Players = Players.RED) -> None:
-    self._state    = FourInARowState(width=width, height=height, first_turn=first_turn)
+  def __init__(self, yellow_agent, width: int = 7, height: int = 6, first_turn: Players = Players.RED, win_condition: int = 4) -> None:
+    self._state    = FourInARowState(width=width, height=height, first_turn=first_turn, win_condition=win_condition)
     self._renderer = FourInARowRenderer(self._state)
     self._yellow_agent = yellow_agent(self)
 
@@ -34,10 +34,13 @@ class FourInARowEnv():
       new_state.place_chip(action)
 
       possible_states.append(new_state)
-      if not self.is_done(new_state):
+      if not new_state.is_finished():
         possible_states.extend(self._calculate_possible_states(new_state))
 
     return possible_states
+
+  def reset(self) -> None:
+    self._state.reset()
 
   def step(self, action: int) -> None:
     made_turn = False
