@@ -72,7 +72,7 @@ class FourInARowEnv():
   def get_reward_for_new(self, state: FourInARowState) -> int:
     winner = state.get_winner()
     if winner != None:
-      if winner != self._state.get_player_turn():
+      if winner != state.get_player_turn():
         return 1
       else:
         return -1
@@ -92,17 +92,16 @@ class FourInARowEnv():
     state_after = deepcopy(old_state)
     state_after.place_chip(action) 
 
-    if state_after.is_finished() and state_after == new_state:
+    if state_after.is_finished() and state_after.get_grid() == new_state.get_grid():
       return 1.0
     
     possible_new_states = [] 
-
-    possible_opponent_actions = self.get_possible_actions(state=state_after)
-    for action in possible_opponent_actions:
+    possible_opponent_actions = self.get_possible_actions(state_after)
+    for a in possible_opponent_actions:
       possible_new_state = deepcopy(state_after)
-      possible_new_state.place_chip(action) 
-      possible_new_states.append(possible_new_state)
-    if new_state not in possible_new_states:
+      possible_new_state.place_chip(a) 
+      possible_new_states.append(possible_new_state.get_grid())
+    if new_state.get_grid() not in possible_new_states:
       return 0.0
 
     prob = 1 / len(possible_new_states)

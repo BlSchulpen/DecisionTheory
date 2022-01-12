@@ -137,7 +137,7 @@ class FourInARowState:
   def is_full(self) -> bool:
     for column in self._grid:
       for chip in column:
-        if chip != BoxState.EMPTY:
+        if chip == BoxState.EMPTY:
           return False
     return True
 
