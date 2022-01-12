@@ -92,8 +92,11 @@ class FourInARowEnv():
     state_after = deepcopy(old_state)
     state_after.place_chip(action) 
 
-    if state_after.is_finished() and state_after.get_grid() == new_state.get_grid():
-      return 1.0
+    if state_after.is_finished():
+      if state_after.get_grid() == new_state.get_grid():
+        return 1.0
+      else:
+        return 0.0
     
     possible_new_states = [] 
     possible_opponent_actions = self.get_possible_actions(state_after)
