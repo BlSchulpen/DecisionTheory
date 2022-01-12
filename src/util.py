@@ -12,3 +12,8 @@ def box_state_from_player(player: Players) -> BoxState:
   match player:
     case Players.RED   : return BoxState.RED
     case Players.YELLOW: return BoxState.YELLOW
+
+def get_other_player(player: Players) -> Players:
+  match player:
+    case Players.RED   : return Players.YELLOW
+    case Players.YELLOW: return Players.RED

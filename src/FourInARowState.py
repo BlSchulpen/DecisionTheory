@@ -1,7 +1,7 @@
 from typing import Optional
 import numpy as np
 
-from .util import box_state_from_player, player_from_box_state
+from .util import box_state_from_player, get_other_player, player_from_box_state
 from .BoxState import BoxState
 from .Players import Players
 
@@ -123,10 +123,20 @@ class FourInARowState:
   def is_column_full(self, column: int) -> bool:
     return self._get_column_height(column) >= self.height
 
-  def place_chip(self, player: Players, column: int) -> None:
+  def place_chip(self, column: int) -> None:
     height = self._get_column_height(column)
     if height >= self.height:
       raise Exception(f'column {column} already filled')
 
-    self._grid[column][height] = box_state_from_player(player)
+    self._grid[column][height] = box_state_from_player(self.get_player_turn())
+    self._turn = get_other_player(self._turn)
     
+  def get_player_turn(self) -> Players:
+    return self._turn
+
+  def is_full(self) -> bool:
+    for column in self._grid:
+      for chip in column:
+        if chip != BoxState.EMPTY:
+          return False
+    return True
