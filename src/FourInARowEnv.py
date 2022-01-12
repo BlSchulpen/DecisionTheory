@@ -66,16 +66,15 @@ class FourInARowEnv():
   def is_done(self) -> bool:
     return self._state.is_finished()
 
-  def get_reward_for_action(self, action: int) -> int:
-    if self.is_done():
-      return 0
-
-    new_state = deepcopy(self._state)
-    new_state.place_chip(action)
-    if new_state.get_winner() != None:
-      return 1
+  def get_reward_for_new(self, state: FourInARowState) -> int:
+    winner = state.get_winner()
+    if winner != None:
+      if winner != self._state.get_player_turn():
+        return 1
+      else:
+        return -1
     else:
-      return -1
+      return 0
 
   def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: FourInARowState = None) -> float:
     if old_state is None:
