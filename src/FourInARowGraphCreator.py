@@ -42,21 +42,14 @@ class FourInARowGraphCreator:
             first_turn    = Players.RED
         )
         return env
-    #     agent = FourInARowRandomAgent(env)
-    #     states = []
-    #     states.append(deepcopy(env.get_state()))
-    #     while not env.is_done():
-    #         env.step(agent.get_move())
-    #         states.append(deepcopy(env.get_state()))
-
 
     #TODO add new graphs to also show ties + loses
     def ratio_value(self, main_type,opponent_type) -> None:
         nr_games = 1
         nr_wins = 0 
         for i in range(nr_games): #TODO frist test graph generation
-            env = self.setup_game(opponent_type)
-            value_iterator = main_type(env)
+            env = self.setup_game(FourInARowRandomAgent)
+            value_iterator = FourInARowMinMaxAgent(env)
             while not env.is_done():
                 env.step(value_iterator.get_move())
             if env._state.get_winner() == Players.RED:
