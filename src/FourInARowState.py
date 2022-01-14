@@ -106,6 +106,9 @@ class FourInARowState:
   def get_grid(self) -> FourInARowGrid:
     return self._grid
 
+  def get_grid_as_tuple(self) -> tuple:
+    return tuple(map(tuple, self._grid))
+
   def get_winner(self) -> Optional[Players]:
     horizontal_winner = self._check_horizontal_win()
     vertical_winner = self._check_vertical_win()

@@ -66,6 +66,27 @@ class FourInARowEnv():
     else:
       return 0
 
+  def _calculate_possible_states(self, state: FourInARowState) -> list[FourInARowState]:
+    possible_states = []
+
+    actions = self.get_possible_actions(state)
+    for action in actions:
+      new_state = deepcopy(state)
+
+      new_state.place_chip(action)
+
+      possible_states.append(new_state)
+      if not new_state.is_finished():
+        possible_states.extend(self._calculate_possible_states(new_state))
+
+    return possible_states
+
+  def get_possible_states(self) -> list[FourInARowState]:
+    if self._possible_states == None:
+      self._possible_states = self._calculate_possible_states(self._state)
+
+    return self._possible_states
+
   def get_possible_states_after_action(self, state: FourInARowState, action: int) -> list[FourInARowState]:
     state_after = deepcopy(state)
     state_after.place_chip(action)
