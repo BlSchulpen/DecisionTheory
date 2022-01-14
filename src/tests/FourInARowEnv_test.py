@@ -7,8 +7,6 @@ class Test_FourInARowEnv(TestCase):
 
   def test_get_reward_win(self):
     # Arrange 
-
-    # should be in setup
     env = FourInARowEnv(
         yellow_agent  = FourInARowRandomAgent,
         width         = 2,
