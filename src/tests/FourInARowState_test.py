@@ -97,7 +97,50 @@ class Test_FourInARowState(TestCase):
     # Assert
     self.assertEqual(expected_winner, actual_winner)
 
+  def test_get_winner_diagonal_win(self):
+    env = FourInARowEnv(
+        yellow_agent  = FourInARowRandomAgent,
+        width         = 2,
+        height        = 2,
+        win_condition = 2,
+        first_turn    = Players.YELLOW
+    )
 
+    env._state._grid = [
+      [BoxState.YELLOW   , BoxState.EMPTY ],
+      [BoxState.EMPTY, BoxState.YELLOW ]
+    ]
+
+  
+    expected_winner = Players.YELLOW
+    actual_winner = env._state.get_winner()
+
+    # Assert
+    self.assertEqual(expected_winner, actual_winner)
+
+
+  def test_get_winner_vertical_win(self):
+    env = FourInARowEnv(
+        yellow_agent  = FourInARowRandomAgent,
+        width         = 2,
+        height        = 2,
+        win_condition = 2,
+        first_turn    = Players.YELLOW
+    )
+
+    env._state._grid = [
+      [BoxState.YELLOW   , BoxState.YELLOW ],
+      [BoxState.EMPTY, BoxState.EMPTY ]
+    ]
+
+  
+    expected_winner = Players.YELLOW
+    actual_winner = env._state.get_winner()
+
+    # Assert
+    self.assertEqual(expected_winner, actual_winner)
+
+#get_winner
 
 #_check_vertical_win
 if __name__ == '__main__':
