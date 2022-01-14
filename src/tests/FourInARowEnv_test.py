@@ -1,6 +1,7 @@
 
 from unittest import TestCase, main
-from src import FourInARowEnv, FourInARowRandomAgent, Players, render_multiple_states, BoxState, FourInARowRenderer, FourInARowValueIterationAgent
+from src import FourInARowEnv, Players,  BoxState
+from src.agents import FourInARowRandomAgent
 from copy import deepcopy
 
 class Test_FourInARowEnv(TestCase):
@@ -176,3 +177,6 @@ class Test_FourInARowEnv(TestCase):
     
     # assert
     self.assertEquals(expected_nr,actual_nr)
+
+if __name__ == '__main__':
+  main()

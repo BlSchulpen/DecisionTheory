@@ -1,8 +1,5 @@
 from unittest import TestCase, main
-from src import  util
-from copy import deepcopy
-from src.BoxState import BoxState
-from src.Players import Players
+from src import util, BoxState, Players
 
 class Test_FourInARowState(TestCase):
   def test_player_from_boxstate(self):
@@ -38,3 +35,6 @@ class Test_FourInARowState(TestCase):
     
     # assert
     self.assertEqual(actual_player, expected_player)
+
+if __name__ == '__main__':
+  main()

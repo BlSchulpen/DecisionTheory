@@ -1,9 +1,9 @@
 from typing import Optional
-from src.FourInARowAgent import FourInARowAgent
 
-from src.Players import Players
-from .FourInARowState import FourInARowState
-from .FourInARowEnv import FourInARowEnv
+from ..FourInARowAgent import FourInARowAgent
+from ..Players import Players
+from ..FourInARowState import FourInARowState
+from ..FourInARowEnv import FourInARowEnv
 
 
 class FourInARowMinMaxAgent(FourInARowAgent):
@@ -11,7 +11,7 @@ class FourInARowMinMaxAgent(FourInARowAgent):
     total_value = 0
     for new_state in self.env.get_possible_states_after_action(state, action):
       probability = self.env.get_transition_prob(action, new_state, state)
-      reward = self.env.get_reward_for_state(new_state, Players.RED)
+      reward = self.env.get_reward_for_state(new_state, self.player)
       total_value += probability * (reward + self.get_q_value(new_state))
     return total_value
 
@@ -31,8 +31,8 @@ class FourInARowMinMaxAgent(FourInARowAgent):
         best_action = action
     return best_action
 
-  def __init__(self, env: FourInARowEnv) -> None:
-    super().__init__(env)
+  def __init__(self, env: FourInARowEnv, player: Players = Players.RED) -> None:
+    super().__init__(env, player)
   
   def get_move(self) -> int:
     result = self.get_highest_utility()

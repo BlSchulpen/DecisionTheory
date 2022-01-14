@@ -1,8 +1,6 @@
 from unittest import TestCase, main
-from .. import FourInARowState
-from src import FourInARowEnv, FourInARowRandomAgent, Players, render_multiple_states, BoxState, FourInARowRenderer, FourInARowValueIterationAgent
-from copy import deepcopy
-from ..FourInARowRandomAgent import FourInARowRandomAgent
+from src import FourInARowEnv, Players, BoxState
+from .. import FourInARowRandomAgent, FourInARowRandomAgent
 
 class Test_FourInARowRandomAgent(TestCase):
   def test_move_allowed(self):

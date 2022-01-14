@@ -1,5 +1,4 @@
-from typing import Generic, Optional, TypeVar
-from numpy.lib.function_base import select
+from typing import Optional
 
 from .FourInARowAgent import FourInARowAgent
 from .BoxState import BoxState
@@ -23,7 +22,7 @@ class FourInARowEnv():
   def __init__(self, yellow_agent, width: int = 7, height: int = 6, first_turn: Players = Players.RED, win_condition: int = 4) -> None:
     self._state    = FourInARowState(width=width, height=height, first_turn=first_turn, win_condition=win_condition)
     self._renderer = FourInARowRenderer(self._state)
-    self._yellow_agent = yellow_agent(self)
+    self._yellow_agent = yellow_agent(self, Players.YELLOW)
     self._possible_states = None
 
   def reset(self) -> None:

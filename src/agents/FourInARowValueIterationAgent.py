@@ -1,17 +1,16 @@
 from copy import deepcopy
-from typing import Optional
-from src.FourInARowAgent import FourInARowAgent
 
-from src.Players import Players
-from .FourInARowState import FourInARowState
-from .FourInARowEnv import FourInARowEnv
+from ..FourInARowAgent import FourInARowAgent
+from ..Players import Players
+from ..FourInARowState import FourInARowState
+from ..FourInARowEnv import FourInARowEnv
 
 
 class FourInARowValueIterationAgent(FourInARowAgent):
   def get_initial_utility(self) -> dict[tuple, float]:
     result = {}
     for s in self.env.get_possible_states():
-      result[s.get_grid_as_tuple()] = self.env.get_reward_for_state(s, Players.RED)
+      result[s.get_grid_as_tuple()] = self.env.get_reward_for_state(s, self.player)
     return result
 
 
@@ -19,7 +18,7 @@ class FourInARowValueIterationAgent(FourInARowAgent):
     result = 0.0
     for sp in self.env.get_possible_states_after_action(state, action):
       p = self.env.get_transition_prob(action, sp, state)
-      r = self.env.get_reward_for_state(sp, Players.RED)
+      r = self.env.get_reward_for_state(sp, self.player)
       result += p * (r + utility[sp.get_grid_as_tuple()])
     return result
 
@@ -44,8 +43,8 @@ class FourInARowValueIterationAgent(FourInARowAgent):
 
   _utility: dict[tuple, float]
 
-  def __init__(self, env: FourInARowEnv, error: float = 0.00001) -> None:
-    super().__init__(env)
+  def __init__(self, env: FourInARowEnv, player: Players = Players.RED, error: float = 0.00001) -> None:
+    super().__init__(env, player)
     self._utility = self.value_iteration(error)
   
   def get_move(self) -> int:

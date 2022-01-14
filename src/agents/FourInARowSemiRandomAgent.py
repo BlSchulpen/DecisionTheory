@@ -1,10 +1,12 @@
 import random
-from .FourInARowEnv import FourInARowEnv
-from .FourInARowAgent import FourInARowAgent
+
+from ..Players import Players
+from ..FourInARowEnv import FourInARowEnv
+from ..FourInARowAgent import FourInARowAgent
 
 class FourInARowSemiRandomAgent(FourInARowAgent):
-  def __init__(self, env: FourInARowEnv) -> None:
-    super().__init__(env)
+  def __init__(self, env: FourInARowEnv, player: Players = Players.RED) -> None:
+    super().__init__(env, player)
 
   def get_move(self) -> int:
     possible_actions = self.env.get_possible_actions()
