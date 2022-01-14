@@ -1,3 +1,6 @@
+from lib2to3.pgen2.pgen import generate_grammar
+from tkinter import W
+from unittest import result
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
@@ -16,8 +19,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np 
 
+
 #TODO add graph preformance (time)
 #TODO add graphs win ratio
+
+
+class FourInARowGameResults:
+    wins: int
+    ties: int
+    loses: int
+    agent: str
+
+    def __init__(self,wins:int,ties:int,loses:int,agent: str) -> None:
+        self.wins = wins
+        self.loses = loses
+        self.ties = ties
+        self.agent = agent
 
 class FourInARowGraphCreator:
     value_iterator_agent: FourInARowValueIterationAgent
@@ -54,20 +71,31 @@ class FourInARowGraphCreator:
                 env.step(value_iterator.get_move())
             if env._state.get_winner() == Players.RED:
                 nr_wins +=1
-      
+    
+    def test(self):
+        result_one = FourInARowGameResults(wins=10,loses=5, ties=5,agent="test agent")
+        result_two = FourInARowGameResults(wins=10,loses=9, ties=1,agent="test2 agent")
+        self.generate_graph([result_one,result_two])
 
-    def generate_graph(self, nr_games: int, min_max_wins:int, value_it_wins:int) -> None:
-        data = [["Min-max agent", self.win_ration(nr_games,min_max_wins)], ["Value iteration agent", self.win_ration(nr_games,value_it_wins)] ]
-        df = pd.DataFrame(data, columns=['agent_type', 'win-ratio'])
+    def generate_graph(self, results:list[FourInARowGameResults]) -> None:        
+        # create data
+        x = []
+        for item in results:
+            x.append(item.agent)
 
-        fig1, ax1 = plt.subplots(figsize=(10,5))
-        ax1.set_title('Agents win ratio')
-        ax1.bar(np.arange(len(df)), df['win-ratio'])
-        ax1.set_xticks(np.arange(len(df)))
-        ax1.set_xticklabels(df['agent_type'])
+        y1 = np.array([results[0].wins, results[1].wins])
+        y2 = np.array([results[0].ties, results[1].ties])
+        y3 = np.array([results[0].loses, results[1].loses])
+
+        # plot bars in stack manner
+        plt.bar(x, y1, color='g')
+        plt.bar(x, y2, bottom=y1, color='y')
+        plt.bar(x, y3, bottom=y1+y2, color='r')
+
+        plt.xlabel("Teams")
+        plt.ylabel("Score")
+        plt.legend(["Wins", "Ties", "Loses"])
+        plt.title("Scores by Teams in 4 Rounds")
         plt.show()
-        rnd_big =random.getrandbits(64)
-        plt.savefig(str(rnd_big) + '.png')
-
     def win_ration(self,nr_games, nr_wins) -> float:
         return (100*nr_wins)/nr_games
