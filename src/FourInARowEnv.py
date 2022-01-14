@@ -86,6 +86,13 @@ class FourInARowEnv():
 
     return self._possible_states
 
+  def get_state_for_action(self, action: int, state: Optional[FourInARowState] = None) -> FourInARowState:
+    if state == None:
+      state = self._state
+    state_after = deepcopy(state)
+    state_after.place_chip(action)
+    return state_after
+
   def get_possible_states_after_action(self, state: FourInARowState, action: int) -> list[FourInARowState]:
     state_after = deepcopy(state)
     state_after.place_chip(action)

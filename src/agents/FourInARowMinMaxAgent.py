@@ -8,12 +8,19 @@ from ..FourInARowEnv import FourInARowEnv
 
 class FourInARowMinMaxAgent(FourInARowAgent):
   def get_utility(self, state: FourInARowState, action: int) -> float:
-    total_value = 0
+    state_after = self.env.get_state_for_action(action, state)
+    if state_after.is_finished():
+      return self.env.get_reward_for_state(state_after, self.player)
+
+    max_value = float('-inf')
     for new_state in self.env.get_possible_states_after_action(state, action):
       probability = self.env.get_transition_prob(action, new_state, state)
       reward = self.env.get_reward_for_state(new_state, self.player)
-      total_value += probability * (reward + self.get_q_value(new_state))
-    return total_value
+      value = probability * (reward + self.get_q_value(new_state))
+
+      if value > max_value:
+        max_value = value
+    return max_value
 
   def get_q_value(self, state: FourInARowState) -> float:
     total_value = 0
