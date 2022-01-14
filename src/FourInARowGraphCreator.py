@@ -86,23 +86,35 @@ class FourInARowGraphCreator:
         # val_it_games = FourInARowGameResults(wins=1,ties=1,loses=1,agent=type(FourInARowMinMaxAgent).__name__)
         # return val_it_games
 
-    def create_graph_game(self) -> None:
-        agent_types = [FourInARowRandomAgent,FourInARowMinMaxAgent, FourInARowMinMaxAgent]
-        results = [] 
-        for start_agent in agent_types:
-            for end_agent in agent_types:
-                result = self.play_game(start_agent,end_agent)
-                results.append(result)
-        self.generate_graph(results)
+    # def create_graph_game(self) -> None:
+    #     agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
+    #     results = [] 
+    #     for start_agent in agent_types:
+    #         for end_agent in agent_types:
+    #             result = self.play_game(start_agent,end_agent)
+    #             results.append(result)
+    #     self.generate_graph(results)
 
 
 
-    def pref_min_max_iterative_vs_random(self):
+    def pref_graph(self) -> None:
         # self.play_game()
         results = [] 
-        # results.append(self.play_game(FourInARowMinMaxAgent,FourInARowRandomAgent))
-        # results.append(self.play_game(FourInARowMinMaxAgent))
-        results.append(self.play_game(FourInARowValueIterationAgent))
+        agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
+        for start_agent in agents:  
+            for end_agent in agents:
+                nr_wins = 0
+                nr_loses = 0 
+                nr_ties = 0 
+                for i in range(self.nr_games):
+                    end_state = self.play_game(start_agent,end_agent)
+                    if end_state == WinType.WIN:
+                        nr_wins +=1
+                    elif end_state== WinType.LOSE:
+                        nr_loses +=1
+                    else:
+                        nr_ties +=1
+                results.append(FourInARowGameResults(wins=nr_wins,loses=nr_loses,ties=nr_ties,agent=type(start_agent).__name__))
         self.generate_graph(results)
 
 
