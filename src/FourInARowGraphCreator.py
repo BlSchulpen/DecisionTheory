@@ -41,14 +41,10 @@ class FourInARowGraphCreator:
     random_agent: FourInARowRandomAgent
     semi_random_agen: FourInARowSemiRandomAgent
     min_max_agen: FourInARowMinMaxAgent
+    nr_games: int
 
     def __init__(self) -> None:
-        pass 
-        # self.random_agent = FourInARowRandomAgent
-        # self.semi_random_agen = FourInARowSemiRandomAgent
-        # self.setup_value_iterator_agent()
-        # self.setup_min_max_agent()
-
+        self.nr_games = 3
 
     def setup_game(self,opponent) -> FourInARowEnv:
         env = FourInARowEnv(
@@ -60,22 +56,38 @@ class FourInARowGraphCreator:
         )
         return env
 
-    #TODO add new graphs to also show ties + loses
-    def ratio_value(self, main_type,opponent_type) -> None:
-        nr_games = 1
+
+    def play_game(self, personal_type,opponent_type) -> FourInARowGameResults:
         nr_wins = 0 
-        for i in range(nr_games): #TODO frist test graph generation
-            env = self.setup_game(FourInARowRandomAgent)
-            value_iterator = FourInARowMinMaxAgent(env)
+        nr_loses = 0
+        nr_ties = 0 
+        for i in range(self.nr_games): 
+            env = self.setup_game(opponent_type)
+            main_agent = personal_type(env)
             while not env.is_done():
-                env.step(value_iterator.get_move())
+                env.step(main_agent.get_move())
             if env._state.get_winner() == Players.RED:
                 nr_wins +=1
-    
-    def test(self):
-        result_one = FourInARowGameResults(wins=10,loses=5, ties=5,agent="test agent")
-        result_two = FourInARowGameResults(wins=10,loses=9, ties=1,agent="test2 agent")
-        self.generate_graph([result_one,result_two])
+            elif env._state.get_winner() == Players.YELLOW:
+                nr_loses +=1       
+            else:
+                nr_ties +=1
+        val_it_games = FourInARowGameResults(wins=nr_wins,ties=nr_ties,loses=nr_loses,agent=type(main_agent).__name__)
+        return val_it_games
+
+    def create_graph_game(self) -> None:
+        agent_types = [FourInARowRandomAgent,FourInARowMinMaxAgent, FourInARowMinMaxAgent]
+        results = [] 
+        for start_agent in agent_types:
+            for end_agent in agent_types:
+                result = self.play_game(start_agent,end_agent)
+                results.append(result)
+        self.generate_graph(results)
+
+
+
+
+
 
     def generate_graph(self, results:list[FourInARowGameResults]) -> None:        
         # create data
@@ -83,9 +95,18 @@ class FourInARowGraphCreator:
         for item in results:
             x.append(item.agent)
 
-        y1 = np.array([results[0].wins, results[1].wins])
-        y2 = np.array([results[0].ties, results[1].ties])
-        y3 = np.array([results[0].loses, results[1].loses])
+        wins = [] 
+        ties = []
+        loses = [] 
+        for result in results:
+            wins.append(result.wins)
+            ties.append(result.ties)
+            loses.append(result.loses)
+
+
+        y1 = np.array(wins)
+        y2 = np.array(ties)
+        y3 = np.array(loses)
 
         # plot bars in stack manner
         plt.bar(x, y1, color='g')
@@ -95,7 +116,9 @@ class FourInARowGraphCreator:
         plt.xlabel("Teams")
         plt.ylabel("Score")
         plt.legend(["Wins", "Ties", "Loses"])
-        plt.title("Scores by Teams in 4 Rounds")
+        plt.title("Result games")
         plt.show()
+
+
     def win_ration(self,nr_games, nr_wins) -> float:
         return (100*nr_wins)/nr_games
