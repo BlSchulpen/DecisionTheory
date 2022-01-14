@@ -131,3 +131,50 @@ class Test_FourInARowEnv(TestCase):
 
     # Assert
     self.assertEqual(expected_grid, actual_grid)
+
+
+  def test_get_possible_states_after_action(self):
+      # arrange 
+    env = FourInARowEnv(
+        yellow_agent  = FourInARowRandomAgent,
+        width         = 2,
+        height        = 2,
+        win_condition = 2,
+        first_turn    = Players.RED
+    )
+    env._state._grid = [
+    [BoxState.EMPTY   , BoxState.EMPTY ],
+    [BoxState.EMPTY, BoxState.EMPTY ]
+        ]
+
+
+
+      # act 
+    expected_nr = 2
+    actual_nr = len(env.get_possible_states_after_action(env._state,0))
+    
+    # assert
+    self.assertEquals(expected_nr,actual_nr)
+
+  def test_get_possible_states_after_action_none(self):
+      # arrange 
+    env = FourInARowEnv(
+        yellow_agent  = FourInARowRandomAgent,
+        width         = 2,
+        height        = 2,
+        win_condition = 2,
+        first_turn    = Players.RED
+    )
+    env._state._grid = [
+    [BoxState.YELLOW   , BoxState.EMPTY ],
+    [BoxState.RED, BoxState.EMPTY ]
+        ]
+
+
+
+      # act 
+    expected_nr = 0
+    actual_nr = len(env.get_possible_states_after_action(env._state,0))
+    
+    # assert
+    self.assertEquals(expected_nr,actual_nr)
