@@ -23,7 +23,11 @@ import numpy as np
 
 #TODO add graph preformance (time)
 #TODO add graphs win ratio
-
+from enum import Enum
+class WinType(Enum):
+    WIN = 1
+    TIE = 2
+    LOSE = 3
 
 class FourInARowGameResults:
     wins: int
@@ -58,23 +62,29 @@ class FourInARowGraphCreator:
         return env
 
 
-    def play_game(self, personal_type,opponent_type) -> FourInARowGameResults:
-        nr_wins = 0 
-        nr_loses = 0
-        nr_ties = 0 
-        for i in range(self.nr_games): 
-            env = self.setup_game(opponent_type)
-            main_agent = personal_type(env)
-            while not env.is_done():
-                env.step(main_agent.get_move())
-            if env._state.get_winner() == Players.RED:
-                nr_wins +=1
-            elif env._state.get_winner() == Players.YELLOW:
-                nr_loses +=1       
-            else:
-                nr_ties +=1
-        val_it_games = FourInARowGameResults(wins=nr_wins,ties=nr_ties,loses=nr_loses,agent=type(main_agent).__name__)
-        return val_it_games
+    def play_game(self, player_type,opponent_type) -> WinType:
+        env = FourInARowEnv(
+            yellow_agent  = opponent_type,
+            width         = 3,
+            height        = 3,
+            win_condition = 3,
+            first_turn    = Players.RED
+            )
+
+        agent = player_type(env)
+        states = []
+        states.append(deepcopy(env.get_state()))
+        while not env.is_done():
+            env.step(agent.get_move())
+            states.append(deepcopy(env.get_state()))
+        if env._state.get_winner() == Players.RED:
+            return WinType.WIN
+        elif env._state.get_winner() == Players.YELLOW:
+            return WinType.LOSE
+        return WinType.TIE
+        
+        # val_it_games = FourInARowGameResults(wins=1,ties=1,loses=1,agent=type(FourInARowMinMaxAgent).__name__)
+        # return val_it_games
 
     def create_graph_game(self) -> None:
         agent_types = [FourInARowRandomAgent,FourInARowMinMaxAgent, FourInARowMinMaxAgent]
@@ -87,6 +97,13 @@ class FourInARowGraphCreator:
 
 
 
+    def pref_min_max_iterative_vs_random(self):
+        # self.play_game()
+        results = [] 
+        # results.append(self.play_game(FourInARowMinMaxAgent,FourInARowRandomAgent))
+        # results.append(self.play_game(FourInARowMinMaxAgent))
+        results.append(self.play_game(FourInARowValueIterationAgent))
+        self.generate_graph(results)
 
 
 
