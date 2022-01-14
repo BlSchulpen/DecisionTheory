@@ -11,8 +11,7 @@ class Test_FourInARowState(TestCase):
   def test_is_column_full_empty(self):
     # Arrange
     state = FourInARowState(width=2, height=2)
-    # Act
-
+    
     # Assert
     self.assertEqual(False, state.is_column_full(0))
 

@@ -80,7 +80,6 @@ class Test_FourInARowEnv(TestCase):
     self.assertEqual(actual_reward, expected_reward)
 
 
-   # is done method...
   def test_is_done(self):
     # Arrange 
     env = FourInARowEnv(
@@ -93,13 +92,42 @@ class Test_FourInARowEnv(TestCase):
     state = deepcopy(env._state)
     state._grid = [
     [BoxState.RED   , BoxState.YELLOW ],
-    [BoxState.YELLOW, BoxState.RED ]
-    ]
+    [BoxState.YELLOW, BoxState.YELLOW ]
+        ]
 
+    # act
     env._state = state
-
-    # Act 
     done = env.is_done()
-
+    
+    
     # Assert
     self.assertTrue(done)
+
+
+
+  def test_step(self):
+    # Arrange 
+    env = FourInARowEnv(
+        yellow_agent  = FourInARowRandomAgent,
+        width         = 2,
+        height        = 2,
+        win_condition = 2,
+        first_turn    = Players.RED
+    )
+    env._state._grid = [
+    [BoxState.RED   , BoxState.EMPTY ],
+    [BoxState.EMPTY, BoxState.EMPTY ]
+        ]
+
+    expected_grid =  [
+    [BoxState.RED   , BoxState.RED ],
+    [BoxState.EMPTY, BoxState.EMPTY ]
+        ]
+
+    # act
+    env.step(0)
+
+    actual_grid = env._state._grid
+
+    # Assert
+    self.assertEqual(expected_grid, actual_grid)
