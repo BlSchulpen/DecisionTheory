@@ -155,6 +155,7 @@ class FourInARowGraphCreator:
         y1 = np.array(wins)
         y2 = np.array(ties)
         y3 = np.array(loses)
+        plt.figure(facecolor='#94F008')
 
         # plot bars in stack manner
         plt.bar(x, y1, color='g')
@@ -165,6 +166,7 @@ class FourInARowGraphCreator:
         plt.ylabel("Score")
         plt.legend(["Wins", "Ties", "Loses"])
         plt.title(name)
+
         plt.show()
 
 
