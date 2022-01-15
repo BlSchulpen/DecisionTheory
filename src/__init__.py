@@ -6,5 +6,3 @@ from .FourInARowRenderer            import *
 from .FourInARowState               import *
 from .FourInARowAgent               import *
 from .FourInARowGraphCreator        import *
-
-from .test        import *

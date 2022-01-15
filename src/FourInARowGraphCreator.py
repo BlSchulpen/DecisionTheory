@@ -96,26 +96,34 @@ class FourInARowGraphCreator:
     #     self.generate_graph(results)
 
 
-
     def pref_graph(self) -> None:
         # self.play_game()
         results = [] 
         agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
         for start_agent in agents:  
             for end_agent in agents:
-                nr_wins = 0
-                nr_loses = 0 
-                nr_ties = 0 
-                for i in range(self.nr_games):
-                    end_state = self.play_game(start_agent,end_agent)
-                    if end_state == WinType.WIN:
-                        nr_wins +=1
-                    elif end_state== WinType.LOSE:
-                        nr_loses +=1
-                    else:
-                        nr_ties +=1
-                results.append(FourInARowGameResults(wins=nr_wins,loses=nr_loses,ties=nr_ties,agent=type(start_agent).__name__))
+                self.play_game(FourInARowMinMaxAgent,FourInARowMinMaxAgent)
         self.generate_graph(results)
+
+    # def pref_graph(self) -> None:
+    #     # self.play_game()
+    #     results = [] 
+    #     agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
+    #     for start_agent in agents:  
+    #         for end_agent in agents:
+    #             nr_wins = 0
+    #             nr_loses = 0 
+    #             nr_ties = 0 
+    #             for i in range(self.nr_games):
+    #                 end_state = self.play_game(start_agent,end_agent)
+    #                 if end_state == WinType.WIN:
+    #                     nr_wins +=1
+    #                 elif end_state== WinType.LOSE:
+    #                     nr_loses +=1
+    #                 else:
+    #                     nr_ties +=1
+    #             results.append(FourInARowGameResults(wins=nr_wins,loses=nr_loses,ties=nr_ties,agent=type(start_agent).__name__))
+    #     self.generate_graph(results)
 
 
 
