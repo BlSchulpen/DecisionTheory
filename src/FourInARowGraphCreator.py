@@ -82,37 +82,13 @@ class FourInARowGraphCreator:
         elif env._state.get_winner() == Players.YELLOW:
             return WinType.LOSE
         return WinType.TIE
-        
-
-        # val_it_games = FourInARowGameResults(wins=1,ties=1,loses=1,agent=type(FourInARowMinMaxAgent).__name__)
-        # return val_it_games
-
-    # def create_graph_game(self) -> None:
-    #     agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
-    #     results = [] 
-    #     for start_agent in agent_types:
-    #         for end_agent in agent_types:
-    #             result = self.play_game(start_agent,end_agent)
-    #             results.append(result)
-    #     self.generate_graph(results)
 
 
-
-    def pref_graph(self) -> None:
-        # self.play_game()
-        results = [] 
-        agents = [FourInARowMinMaxAgent,FourInARowRandomAgent,FourInARowSemiRandomAgent,FourInARowValueIterationAgent]
-        for start_agent in agents:  
-            for end_agent in agents:
-                results.append(self.play_game(FourInARowMinMaxAgent,FourInARowMinMaxAgent))
-        self.generate_graph(results)
-
-
-    def random_vs_vm(self):
+    def min_max_game(self,opponent_type,name):
         results =  []
         game_results = FourInARowGameResults(0,0,0,"Min Max")
         for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowMinMaxAgent,FourInARowRandomAgent)
+            end_state = self.play_game(FourInARowMinMaxAgent,opponent_type)
             if end_state == WinType.WIN:
                 game_results.wins +=1
             elif end_state== WinType.LOSE:
@@ -123,7 +99,7 @@ class FourInARowGraphCreator:
 
         game_results2 = FourInARowGameResults(0,0,0,"Iterative")
         for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowValueIterationAgent,FourInARowRandomAgent)
+            end_state = self.play_game(FourInARowValueIterationAgent,opponent_type=opponent_type)
             if end_state == WinType.WIN:
                 game_results2.wins +=1
             elif end_state== WinType.LOSE:
@@ -131,7 +107,33 @@ class FourInARowGraphCreator:
             else:
                 game_results2.ties +=1
         results.append(game_results2)
-        self.generate_graph(results=results,name="Min max & Value iteration agent against Random agent")
+        self.generate_graph(results=results,name=name)
+
+
+    def random_graph(self,opponent_type,name):
+        results =  []
+        game_results = FourInARowGameResults(0,0,0,"Random agent")
+        for i in range(self.nr_games):
+            end_state = self.play_game(FourInARowRandomAgent,opponent_type)
+            if end_state == WinType.WIN:
+                game_results.wins +=1
+            elif end_state== WinType.LOSE:
+                game_results.loses +=1
+            else:
+                game_results.ties +=1
+        results.append(game_results)
+
+        game_results2 = FourInARowGameResults(0,0,0,"Semi-random agent")
+        for i in range(self.nr_games):
+            end_state = self.play_game(FourInARowSemiRandomAgent,opponent_type=opponent_type)
+            if end_state == WinType.WIN:
+                game_results2.wins +=1
+            elif end_state== WinType.LOSE:
+                game_results2.loses +=1
+            else:
+                game_results2.ties +=1
+        results.append(game_results2)
+        self.generate_graph(results=results,name=name)
 
 
 
