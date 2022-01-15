@@ -1,5 +1,6 @@
 from lib2to3.pgen2.pgen import generate_grammar
 from tkinter import W
+from tracemalloc import start
 from unittest import result
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,19 +11,15 @@ from src.agents import FourInARowRandomAgent
 from src.agents import FourInARowValueIterationAgent
 from src.agents import FourInARowSemiRandomAgent
 from src.agents import FourInARowMinMaxAgent
-
-
+import time
 from .Players import Players
 from copy import deepcopy
-
-import random
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np 
 
 
-#TODO add graph preformance (time)
-#TODO add graphs win ratio
+
 from enum import Enum
 class WinType(Enum):
     WIN = 1
@@ -49,7 +46,7 @@ class FourInARowGraphCreator:
     nr_games: int
 
     def __init__(self) -> None:
-        self.nr_games = 1
+        self.nr_games = 20
 
     def setup_game(self,opponent) -> FourInARowEnv:
         env = FourInARowEnv(
@@ -84,64 +81,29 @@ class FourInARowGraphCreator:
         return WinType.TIE
 
 
-    def min_max_game(self,opponent_type,name):
-        results =  []
-        game_results = FourInARowGameResults(0,0,0,"Min Max")
-        for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowMinMaxAgent,opponent_type)
-            if end_state == WinType.WIN:
-                game_results.wins +=1
-            elif end_state== WinType.LOSE:
-                game_results.loses +=1
-            else:
-                game_results.ties +=1
-        results.append(game_results)
+    def plot_acc(self,players_to_meassure, name,opponent_type):
+        scores = []
 
-        game_results2 = FourInARowGameResults(0,0,0,"Iterative")
-        for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowValueIterationAgent,opponent_type=opponent_type)
-            if end_state == WinType.WIN:
-                game_results2.wins +=1
-            elif end_state== WinType.LOSE:
-                game_results2.loses +=1
-            else:
-                game_results2.ties +=1
-        results.append(game_results2)
-        self.generate_graph(results=results,name=name)
-
-
-    def random_graph(self,opponent_type,name):
-        results =  []
-        game_results = FourInARowGameResults(0,0,0,"Random agent")
-        for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowRandomAgent,opponent_type)
-            if end_state == WinType.WIN:
-                game_results.wins +=1
-            elif end_state== WinType.LOSE:
-                game_results.loses +=1
-            else:
-                game_results.ties +=1
-        results.append(game_results)
-
-        game_results2 = FourInARowGameResults(0,0,0,"Semi-random agent")
-        for i in range(self.nr_games):
-            end_state = self.play_game(FourInARowSemiRandomAgent,opponent_type=opponent_type)
-            if end_state == WinType.WIN:
-                game_results2.wins +=1
-            elif end_state== WinType.LOSE:
-                game_results2.loses +=1
-            else:
-                game_results2.ties +=1
-        results.append(game_results2)
-        self.generate_graph(results=results,name=name)
-
+        for player in players_to_meassure:
+            game_result = FourInARowGameResults(0,0,0,player.__name__)
+            for i in range(self.nr_games):
+                end_state = self.play_game(player,opponent_type)
+                if end_state == WinType.WIN:
+                    game_result.wins +=1
+                elif end_state== WinType.LOSE:
+                    game_result.loses +=1
+                else:
+                    game_result.ties +=1
+            scores.append(game_result)
+        self.generate_graph(scores,name)
 
 
     def generate_graph(self, results:list[FourInARowGameResults], name: str) -> None:        
         # create data
         x = []
         for item in results:
-            x.append(item.agent)
+            name_fixed = item.agent.removeprefix('FourInARow')
+            x.append(name_fixed)
 
         wins = [] 
         ties = []
@@ -170,5 +132,44 @@ class FourInARowGraphCreator:
         plt.show()
 
 
+    def meassure_preformance(self,player,opponent):
+        start_time = time.time()
+        self.play_game(player,opponent)
+        return (time.time() - start_time)
+
+    def plot_preformance(self,players_to_meassure):
+        names = []
+        execution_time = []
+
+        for player in players_to_meassure:
+            name_fixed = player.__name__.removeprefix('FourInARow')
+            name_fixed.removesuffix('Agent')    
+            names.append(name_fixed)
+            player_exe_time= []
+            for i in range(self.nr_games):
+                exe_time = self.meassure_preformance(player,FourInARowRandomAgent)
+                player_exe_time.append(exe_time)
+            execution_time.append(player_exe_time)
+        self.generate_line_graph_preformance(execution_time,names)
+
+
+
+    def generate_line_graph_preformance(self,y_values,names:list[str]):
+        x = []
+        for i in range(self.nr_games):
+            x.append(i)
+
+        plt.figure(facecolor='#94F008')
+
+        # plot lines
+        for i in range(len(y_values)):
+            plt.plot(x,y_values[i], label=names[i])
+
+        plt.xlabel("Game number")
+        plt.ylabel("Time (ms)")
+        plt.legend()
+        plt.show()
+
     def win_ration(self,nr_games, nr_wins) -> float:
         return (100*nr_wins)/nr_games
+
