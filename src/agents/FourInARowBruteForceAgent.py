@@ -6,7 +6,7 @@ from ..FourInARowState import FourInARowState
 from ..FourInARowEnv import FourInARowEnv
 
 
-class FourInARowMinMaxAgent(FourInARowAgent):
+class FourInARowBruteForceAgent(FourInARowAgent):
   def get_utility(self, state: FourInARowState, action: int) -> float:
     state_after = self.env.get_state_for_action(action, state)
     if state_after.is_finished():

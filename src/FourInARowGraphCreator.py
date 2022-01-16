@@ -10,7 +10,7 @@ from .FourInARowEnv import FourInARowEnv
 from src.agents import FourInARowRandomAgent
 from src.agents import FourInARowValueIterationAgent
 from src.agents import FourInARowSemiRandomAgent
-from src.agents import FourInARowMinMaxAgent
+from src.agents import FourInARowBruteForceAgent
 import time
 from .Players import Players
 from copy import deepcopy
@@ -42,7 +42,7 @@ class FourInARowGraphCreator:
     value_iterator_agent: FourInARowValueIterationAgent
     random_agent: FourInARowRandomAgent
     semi_random_agen: FourInARowSemiRandomAgent
-    min_max_agen: FourInARowMinMaxAgent
+    brute_for_agent: FourInARowBruteForceAgent
     nr_games: int
 
     def __init__(self) -> None:
@@ -103,6 +103,7 @@ class FourInARowGraphCreator:
         x = []
         for item in results:
             name_fixed = item.agent.removeprefix('FourInARow')
+            name_fixed= name_fixed.removesuffix('Agent')    
             x.append(name_fixed)
 
         wins = [] 
@@ -143,7 +144,7 @@ class FourInARowGraphCreator:
 
         for player in players_to_meassure:
             name_fixed = player.__name__.removeprefix('FourInARow')
-            name_fixed.removesuffix('Agent')    
+            name_fixed= name_fixed.removesuffix('Agent')    
             names.append(name_fixed)
             player_exe_time= []
             for i in range(self.nr_games):
