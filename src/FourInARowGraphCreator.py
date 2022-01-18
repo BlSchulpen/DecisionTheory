@@ -1,5 +1,4 @@
 from lib2to3.pgen2.pgen import generate_grammar
-from tkinter import W
 from tracemalloc import start
 from unittest import result
 import matplotlib.pyplot as plt
