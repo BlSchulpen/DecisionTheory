@@ -50,6 +50,10 @@ class FourInARowEnv():
   def get_possible_actions(self, state: Optional[FourInARowState] = None) -> list[int]:
     if state is None:
       state = self._state
+
+    if state.is_finished():
+      return []
+    
     return [column for column in range(state.width) if not state.is_column_full(column)]
 
   def is_done(self) -> bool:
@@ -98,7 +102,7 @@ class FourInARowEnv():
     state_after.place_chip(action)
 
     if state_after.is_finished():
-      return []
+      return [state_after]
 
     result = []
     for a in self.get_possible_actions(state_after):
@@ -109,7 +113,7 @@ class FourInARowEnv():
 
   def get_transition_prob(self, action: int, new_state: FourInARowState, old_state: Optional[FourInARowState] = None) -> float:
     if old_state is None:
-       old_state = self._state
+      old_state = self._state
 
     if old_state.is_finished():
       return 0.0
