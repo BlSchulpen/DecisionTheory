@@ -46,3 +46,6 @@ class FourInARowBruteForceAgent(FourInARowAgent):
     if result == None:
       raise Exception('unwrap failed')
     return result
+
+  def get_transition_probability(self, possible_states: list[FourInARowState], new_state: FourInARowState) -> float:
+    return 1 / len(possible_states) # TODO: Implement this

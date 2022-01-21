@@ -3,6 +3,7 @@ import random
 from ..Players import Players
 from ..FourInARowEnv import FourInARowEnv
 from ..FourInARowAgent import FourInARowAgent
+from ..FourInARowState import FourInARowState
 
 class FourInARowSemiRandomAgent(FourInARowAgent):
   def _get_utility_for_action(self, action: int) -> int:
@@ -35,3 +36,18 @@ class FourInARowSemiRandomAgent(FourInARowAgent):
         best_move = a
 
     return best_move
+
+  def get_transition_probability(self, possible_states: list[FourInARowState], new_state: FourInARowState) -> float:
+    winning = [s.get_grid() for s in possible_states if self.env.get_reward_for_state(s, self.player) == 1]
+    neutral = [s.get_grid() for s in possible_states if self.env.get_reward_for_state(s, self.player) == 0]
+    losing = [s.get_grid() for s in possible_states if self.env.get_reward_for_state(s, self.player) == -1]
+
+    if new_state.get_grid() in winning:
+      return 1 / len(winning)
+    elif new_state.get_grid() in losing:
+      if winning or neutral:
+        return 0
+      else:
+        return 1 / len(losing) # Can only lose :(
+    else:
+      return 1 / len(neutral)

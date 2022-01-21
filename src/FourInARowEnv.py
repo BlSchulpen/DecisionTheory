@@ -120,7 +120,7 @@ class FourInARowEnv():
 
     if old_state.is_column_full(action):
       return 0.0
-    
+
     state_after = deepcopy(old_state)
     state_after.place_chip(action) 
 
@@ -130,14 +130,8 @@ class FourInARowEnv():
       else:
         return 0.0
     
-    possible_new_states = [] 
-    possible_opponent_actions = self.get_possible_actions(state_after)
-    for a in possible_opponent_actions:
-      possible_new_state = deepcopy(state_after)
-      possible_new_state.place_chip(a) 
-      possible_new_states.append(possible_new_state.get_grid())
-    if new_state.get_grid() not in possible_new_states:
+    possible_new_states = self.get_possible_states_after_action(old_state, action)
+    if new_state.get_grid() not in [s.get_grid() for s in possible_new_states]:
       return 0.0
 
-    prob = 1 / len(possible_new_states)
-    return prob
+    return self._yellow_agent.get_transition_probability(possible_new_states, new_state)

@@ -3,6 +3,7 @@ from .Players import Players
 
 if TYPE_CHECKING:
   from .FourInARowEnv import FourInARowEnv
+  from .FourInARowState import FourInARowState
 
 class FourInARowAgent:
   env: 'FourInARowEnv'
@@ -13,4 +14,7 @@ class FourInARowAgent:
     self.player = player
 
   def get_move(self) -> int:
+    pass
+
+  def get_transition_probability(self, possible_states: list['FourInARowState'], new_state: 'FourInARowState') -> float:
     pass
