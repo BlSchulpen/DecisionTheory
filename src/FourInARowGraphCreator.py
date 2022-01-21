@@ -47,24 +47,14 @@ class FourInARowGraphCreator:
     def __init__(self) -> None:
         self.nr_games = 20
 
-    def setup_game(self,opponent) -> FourInARowEnv:
-        env = FourInARowEnv(
-            yellow_agent  = opponent,
-            width         = 3,
-            height        = 3,
-            win_condition = 3,
-            first_turn    = Players.RED
-        )
-        return env
 
-
-    def play_game(self, player_type,opponent_type) -> WinType:
+    def play_game(self, player_type,opponent_type,first_turn) -> WinType:
         env = FourInARowEnv(
             yellow_agent  = opponent_type,
             width         = 3,
             height        = 3,
             win_condition = 3,
-            first_turn    = Players.RED
+            first_turn    = first_turn
             )
 
         agent = player_type(env)
@@ -80,13 +70,13 @@ class FourInARowGraphCreator:
         return WinType.TIE
 
 
-    def plot_acc(self,players_to_meassure, name,opponent_type):
+    def plot_acc(self,players_to_meassure, name,opponent_type,first_turn):
         scores = []
 
         for player in players_to_meassure:
             game_result = FourInARowGameResults(0,0,0,player.__name__)
             for i in range(self.nr_games):
-                end_state = self.play_game(player,opponent_type)
+                end_state = self.play_game(player,opponent_type,first_turn)
                 if end_state == WinType.WIN:
                     game_result.wins +=1
                 elif end_state== WinType.LOSE:
@@ -97,7 +87,32 @@ class FourInARowGraphCreator:
         self.generate_graph(scores,name)
 
 
-    def generate_graph(self, results:list[FourInARowGameResults], name: str) -> None:        
+    def plot_acc_two(self,players_to_meassure, name,opponent_type):
+        scores = []
+        map_n = {Players.RED:" (First move)", Players.YELLOW:" (Second move)"}
+        for player in players_to_meassure:
+            for type in Players:
+                name_fixed = player.__name__.removeprefix('FourInARow')
+                name_fixed= name_fixed.removesuffix('Agent')
+                name_fixed += map_n[type]
+                game_result = FourInARowGameResults(0,0,0,name_fixed)
+                for i in range(self.nr_games):
+                    end_state = self.play_game(player,opponent_type,type)
+                    if end_state == WinType.WIN:
+                        game_result.wins +=1
+                    elif end_state== WinType.LOSE:
+                        game_result.loses +=1
+                    else:
+                        game_result.ties +=1
+                scores.append(game_result)
+        self.generate_graph(scores,name,True)
+
+
+
+
+
+
+    def generate_graph(self, results:list[FourInARowGameResults], name: str, big:bool = False) -> None:        
         # create data
         x = []
         for item in results:
@@ -113,12 +128,18 @@ class FourInARowGraphCreator:
             ties.append(result.ties)
             loses.append(result.loses)
 
-
         y1 = np.array(wins)
         y2 = np.array(ties)
         y3 = np.array(loses)
         plt.figure(facecolor='#94F008')
 
+        if big:
+            plt.xticks(
+                rotation=45, 
+                horizontalalignment='right',
+                fontweight='light',
+                fontsize='medium'  
+            )
         # plot bars in stack manner
         plt.bar(x, y1, color='g')
         plt.bar(x, y2, bottom=y1, color='y')
@@ -132,9 +153,9 @@ class FourInARowGraphCreator:
         plt.show()
 
 
-    def meassure_preformance(self,player,opponent):
+    def meassure_preformance(self,player,opponent,first_turn):
         start_time = time.time()
-        self.play_game(player,opponent)
+        self.play_game(player,opponent,first_turn)
         return (time.time() - start_time)
 
     def plot_preformance(self,players_to_meassure):
@@ -147,7 +168,7 @@ class FourInARowGraphCreator:
             names.append(name_fixed)
             player_exe_time= []
             for i in range(self.nr_games):
-                exe_time = self.meassure_preformance(player,FourInARowRandomAgent)
+                exe_time = self.meassure_preformance(player,FourInARowRandomAgent,Players.RED)
                 player_exe_time.append(exe_time)
             execution_time.append(player_exe_time)
         self.generate_line_graph_preformance(execution_time,names)
