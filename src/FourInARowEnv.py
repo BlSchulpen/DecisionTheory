@@ -25,21 +25,19 @@ class FourInARowEnv():
     self._yellow_agent = yellow_agent(self, Players.YELLOW)
     self._possible_states = None
 
+    if first_turn == Players.YELLOW:
+      move = self._yellow_agent.get_move()
+      self._state.place_chip(move)
+
   def reset(self) -> None:
     self._state.reset()
 
   def step(self, action: int) -> None:
-    made_turn = False
-    if self._state.get_player_turn() == Players.RED:
-      self._state.place_chip(action)
-      made_turn = True
+    self._state.place_chip(action)
       
     if not self.is_done():
       move = self._yellow_agent.get_move()
       self._state.place_chip(move)
-
-    if not made_turn and not self.is_done():
-      self._state.place_chip(action)
 
   def render(self) -> str:
     return self._renderer.render()
