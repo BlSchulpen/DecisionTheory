@@ -18,8 +18,8 @@ class FourInARowValueIterationAgent(FourInARowAgent):
     result = 0.0
     for sp in self.env.get_possible_states_after_action(state, action):
       p = self.env.get_transition_prob(action, sp, state)
-      # r = self.env.get_reward_for_state(sp, self.player)
-      result += p * (utility[sp.get_grid_as_tuple()])
+      r = self.env.get_reward_for_state(state, self.player)
+      result += p * (r + utility[sp.get_grid_as_tuple()])
     return result
 
   def value_iteration(self, error: float) -> dict[tuple, float]:
